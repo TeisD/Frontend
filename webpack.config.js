@@ -82,6 +82,9 @@ const productionConfig = merge([
 ]);
 
 const developmentConfig = merge([
+	{
+		bail: false,
+	},
 	parts.browserSync({
 		host: 'localhost',
 		port: 3000,
