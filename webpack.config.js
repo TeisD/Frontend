@@ -21,7 +21,6 @@ const config = merge([
 		},
 		output: {
 			path: PATHS.build,
-			publicPath: PATHS.build,
 			filename: "[name].js",
 		},
 		plugins: [
