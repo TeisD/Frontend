@@ -67,9 +67,10 @@ exports.loadHTML = ({ parent } = {}) => {
 
 	return {
 		module: {
-			loaders: [
+			rules: [
 				{
 					test: /\.html$/,
+					exclude: /node_modules/,
 					use: 'html-loader',
 				}],
 		},
@@ -93,33 +94,29 @@ exports.loadNunjucks = ({ parent } = {}) => {
 		}
 	);
 
-	const options = {
-		context: parent,
-		searchPaths: [
-			parent
-		],
-	}
-
 	// load HtmlWebpackPlugin for every page
 	// see: https://github.com/xiao555/nunjucks-extend-loader
 	// and: https://github.com/ryanhornberger/nunjucks-html-loader
 	plugins = pages.map(
 		page => new HtmlWebpackPlugin({
 			filename: page.replace('.njk', '.html'),
-			template: 'html-loader!nunjucks-html-loader?' + JSON.stringify(options) + '!' + path.join(parent, page),
+			template: path.join(parent, page),
 		})
 	);
 
 	return {
 		module: {
-			loaders: [
+			rules: [
 				{
 					test: /\.(njk|nunjucks)$/,
 					use: [
 						'html-loader',
 						{
 							loader: 'nunjucks-html-loader',
-							options : options
+							options: {
+								context: parent,
+								searchPaths: [parent],
+							}
 						}
 					]
 				}],
@@ -287,3 +284,32 @@ exports.browserSync = ( options = {} ) => ({
     )
   ]
 });
+
+/*
+ * Dynamically add entries
+ * Depends on entry.js
+ * Should be rewritten as a plugin
+ */
+exports.addEntries = ({ script, path }) => {
+
+	const pages = glob.sync(
+		'**/*.+(njk|html)', {
+			cwd: path,
+			nomount: true,
+			nodir: true,
+			ignore: '**/_*',
+		}
+	);
+		
+	return {
+		entry: {
+			development: script
+		},
+		plugins: [
+			new webpack.DefinePlugin({
+				VIEWS: JSON.stringify(pages),
+				PATH: JSON.stringify(path),
+			})
+		]
+	}
+};

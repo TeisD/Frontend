@@ -102,6 +102,10 @@ const developmentConfig = merge([
 	parts.generateSourceMaps({
     type: "cheap-module-eval-source-map"
   }),
+	parts.addEntries({
+		script: '../config/entry.js',
+		path: path.join(PATHS.app, "views"),
+	})
 ]);
 
 module.exports = env => {
