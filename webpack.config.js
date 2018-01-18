@@ -28,6 +28,7 @@ const config = merge([
 		],
 	},
 	// load reusable parts
+	parts.loadJS(),
 	parts.loadHTML({
 		parent: path.join(PATHS.app, "views"),
 	}),

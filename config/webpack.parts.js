@@ -9,7 +9,6 @@ const OptimizeCSSAssetsPlugin = require("optimize-css-assets-webpack-plugin"); /
 const cssnano = require("cssnano") // css minification processor
 const BrowserSyncPlugin = require("browser-sync-webpack-plugin"); // browser sync
 const HtmlWebpackPlugin = require("html-webpack-plugin"); // generate html files
-const NunjucksWebpackPlugin = require("nunjucks-webpack-plugin"); // build nunjucks files
 
 /*
  * Setup hot-reloading dev-server
@@ -39,6 +38,26 @@ exports.devServer = ({host, port} = {}) => ({
  */
 exports.autoprefix = () => ({
 	loader: "postcss-loader"
+});
+
+/* ES6 loader
+ *
+ */
+exports.loadJS = () => ({
+	module: {
+		rules: [
+			{
+  			test: /\.js$/,
+				exclude: /(node_modules|bower_components)/,
+				use: {
+					loader: "babel-loader",
+					options: {
+						presets: ['es2015'],
+					}
+				}
+			},
+    ],
+	},
 });
 
 /*
